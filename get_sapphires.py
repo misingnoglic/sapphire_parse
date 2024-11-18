@@ -1,10 +1,11 @@
 from bs4 import BeautifulSoup
-import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import progressbar
+from tenacity import retry, stop_after_attempt, wait_fixed
+
+import requests
 import re
 import csv
-from tenacity import retry, stop_after_attempt, wait_fixed
 
 # Extract URLs and names of sapphires
 def get_sapphire_urls(html_content):
@@ -68,9 +69,10 @@ def update_one_sapphire_url(sapphire):
     sapphire.update(sapphire_details)
 
 # Main script
-if __name__ == "__main__":
+def refresh_sapphire_csv():
     main_page_urls = [
         'https://www.thenaturalsapphirecompany.com/padparadscha-sapphires/?pagesize=1000',
+        'https://www.thenaturalsapphirecompany.com/white-sapphires/?pagesize=1000',
         'https://www.thenaturalsapphirecompany.com/unique-colored-sapphires/?color=peach&price_min=0&price_max=350000&carat_min=0&carat_max=35&sortby=&pagesize=1000'
     ]
     sapphires = []
@@ -78,7 +80,9 @@ if __name__ == "__main__":
         parsed_html = requests.get(base_url).text
 
         # Step 1: Get sapphire URLs
-        sapphires.extend(get_sapphire_urls(parsed_html))
+        sapphire_urls = get_sapphire_urls(parsed_html)
+        sapphires.extend(sapphire_urls)
+        print(f"Found {len(sapphire_urls)} sapphires on {base_url}")
 
     # Step 2: Update sapphire details using multithreading
     bar = progressbar.ProgressBar(max_value=len(sapphires))
@@ -115,3 +119,6 @@ if __name__ == "__main__":
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(sapphires)
+
+if __name__ == "__main__":
+    refresh_sapphire_csv()
