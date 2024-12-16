@@ -72,8 +72,17 @@ def update_one_sapphire_url(sapphire):
 def refresh_sapphire_csv():
     main_page_urls = [
         'https://www.thenaturalsapphirecompany.com/padparadscha-sapphires/?pagesize=1000',
-        'https://www.thenaturalsapphirecompany.com/white-sapphires/?pagesize=1000',
-        'https://www.thenaturalsapphirecompany.com/unique-colored-sapphires/?color=peach&price_min=0&price_max=350000&carat_min=0&carat_max=35&sortby=&pagesize=1000'
+        # 'https://www.thenaturalsapphirecompany.com/white-sapphires/?pagesize=1000',
+        # THis one is just peach, comment out if doing all uniques
+        'https://www.thenaturalsapphirecompany.com/unique-colored-sapphires/?color=peach&price_min=0&price_max=350000&carat_min=0&carat_max=35&sortby=&pagesize=1000',
+        # 'https://www.thenaturalsapphirecompany.com/unique-colored-sapphires/?pagesize=5000',
+        # 'https://www.thenaturalsapphirecompany.com/unique-colored-sapphires/?pagenum=2&pagesize=5000',
+        # 'https://www.thenaturalsapphirecompany.com/blue-sapphires/?pagesize=5000',
+        # 'https://www.thenaturalsapphirecompany.com/blue-sapphires/?pagenum=2&pagesize=5000',
+        # 'https://www.thenaturalsapphirecompany.com/pink-sapphires/?pagesize=3000',
+        # 'https://www.thenaturalsapphirecompany.com/yellow-sapphires/?pagesize=3000',
+        # 'https://www.thenaturalsapphirecompany.com/green-sapphires/?pagesize=1000',
+        # 'https://www.thenaturalsapphirecompany.com/purple-sapphires/?pagesize=1000',
     ]
     sapphires = []
     for base_url in main_page_urls:
@@ -97,6 +106,7 @@ def refresh_sapphire_csv():
             except Exception as exc:
                 sapphire['error'] = str(exc)
             bar.update(bar.value + 1)
+    bar.finish()
 
     # Cleanup
     for sapphire in sapphires:
